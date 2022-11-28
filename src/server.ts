@@ -1,7 +1,29 @@
-import { consultar } from 'consulta-cnpj-br';
+import express from 'express'
+import dotenv from 'dotenv'
+import cnpjRoutes from './routes/busca.routes'
+import config from './db'
+import sql from 'mssql'
 
-const cnpjInova = "07.047.220/0001-10";
+dotenv.config()
 
-consultar(cnpjInova).then(res =>{
-  console.log(res)
+sql.connect(config)
+  .then(
+    (conn: any) => {
+      // eslint-disable-next-line no-return-assign
+      return global.conn = conn
+    }
+  )
+  .catch(
+    (err: any) => {
+      console.log(err)
+    }
+  )
+const port = process.env.PORT
+
+const app = express()
+
+app.use('/buscaCNPJ', cnpjRoutes)
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`)
 })
