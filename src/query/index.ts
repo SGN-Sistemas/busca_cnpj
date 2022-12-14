@@ -194,21 +194,22 @@ const insertRelAtvEmpr = (
 }
 
 const insertPessoaJuridica = (
-  PEJU_COD : string,
-  PEJU_CGC : string,
-  PEJU_EMAIL : string,
-  PEJU_UNFE_SIGLA : string,
-  PEJU_CIDADE : string,
-  PEJU_RAZAO_SOCIAL : string,
-  PEJU_NOME_FANTASIA : string,
-  PEJU_TEL : string,
-  PEJU_END : string,
-  PEJU_CEP : string,
-  PEJU_BAIRRO : string
+    PEJU_COD : string,
+    PEJU_CGC : string,
+    PEJU_EMAIL : string,
+    PEJU_UNFE_SIGLA : string,
+    PEJU_CIDADE : string,
+    PEJU_RAZAO_SOCIAL : string,
+    PEJU_NOME_FANTASIA : string,
+    PEJU_TEL : string,
+    PEJU_END : string,
+    PEJU_CEP : string,
+    PEJU_BAIRRO: string,
+    banco: string
 ) => {
   return `
     INSERT INTO 
-        LEAO.dbo.PESSOA_JURIDICA
+        ${banco}.dbo.PESSOA_JURIDICA
             (
                 PEJU_COD,
                 PEJU_CGC,
@@ -245,13 +246,14 @@ const insertPessoaJuridica = (
 }
 
 const insertFornedor = (
-  FORN_NOME : string,
-  FORN_COD : string,
-  FORN_TIPO_COD : string
+    FORN_NOME : string,
+    FORN_COD : string,
+    FORN_TIPO_COD: string,
+    banco: string
 ) => {
   return `
     INSERT INTO
-        LEAO.dbo.FORNECEDOR
+        ${banco}.dbo.FORNECEDOR
             (
                 FORN_COD,
                 FORN_NOME,
@@ -276,13 +278,39 @@ const insertFornedor = (
     `
 }
 
+const selectEmpresaEndereco = (cnpj : string) => {
+
+    return `
+        SELECT
+            EMPR_CNPJ,
+            EMPR_EMAIL,
+            ENDE_UF,
+            ENDE_MUNICIPIO,
+            EMPR_RAZAO_SOCIAL,
+            EMPR_FANTASIA,
+            EMPR_TELEFONE,
+            ENDE_COMPLEMENTO,
+            ENDE_CEP,
+            ENDE_BAIRRO
+        FROM 
+            EMPRESA
+        INNER JOIN
+            ENDERECO
+        ON
+            ENDE_EMPR_COD = EMPR_COD
+        WHERE
+            EMPR_CNPJ = '${cnpj}'
+    `
+}
+
 export {
-  insertEMPR,
-  insertSocio,
-  insertRelEMPRSocio,
-  insertEndereco,
-  insertAtividade,
-  insertRelAtvEmpr,
-  insertPessoaJuridica,
-  insertFornedor
+    insertEMPR,
+    insertSocio,
+    insertRelEMPRSocio,
+    insertEndereco,
+    insertAtividade,
+    insertRelAtvEmpr,
+    insertPessoaJuridica,
+    insertFornedor,
+    selectEmpresaEndereco
 }

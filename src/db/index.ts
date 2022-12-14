@@ -5,7 +5,7 @@ dotenv.config()
 const config = {
 
   server: process.env.SERVER,
-  user: process.env.USER,
+  user: process.env.USERTESTE,
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
   synchronize: true,
