@@ -150,7 +150,7 @@ async function execSQLQuery(
         })
       }
       connect.request()
-        .query('SELECT MAX(PEJU_COD + 1) as ID FROM LEAO.dbo.PESSOA_JURIDICA')
+        .query(`SELECT MAX(PEJU_COD + 1) as ID FROM ${banco}.dbo.PESSOA_JURIDICA`)
         .then((resp: any) => {
           const idPEJU = resp.recordset[0].ID
           const sqlInsertPessoaJuridica = insertPessoaJuridica(
@@ -172,7 +172,7 @@ async function execSQLQuery(
             .then((resp) => {
               console.log('Pessoa juridica inserido')
               connect.request()
-                .query('SELECT MAX(FORN_COD + 1) as ID FROM LEAO.dbo.FORNECEDOR')
+                .query(`SELECT MAX(FORN_COD + 1) as ID FROM ${banco}.dbo.FORNECEDOR`)
                 .then(async (resp) => {
                   const fornCod = resp.recordset[0].ID
                   const sqlInsertFornedor = insertFornedor(
@@ -192,7 +192,12 @@ async function execSQLQuery(
                 })
                 .catch(() => { res.send({ message: 'Erro ao inserir o fornecedor' }) })
             })
-            .catch(() => { res.send({ message: 'Erro ao inserir pessoa juridica' }) })
+            .catch(() => {
+              console.log('====================================');
+              console.log(1);
+              console.log('====================================');
+              res.send({ message: 'Erro ao inserir pessoa juridica' })
+            })
         })
         .catch(() => { res.send({ message: 'Erro ao inserir pessoa juridica' }) })
     })

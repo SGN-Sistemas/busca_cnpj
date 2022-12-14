@@ -23,7 +23,7 @@ const execSqlPejuForn = async (
             const ENDE_CEP = resp.recordset[0].ENDE_CEP
             const ENDE_BAIRRO = resp.recordset[0].ENDE_BAIRRO
             connect.request()
-                .query('SELECT MAX(PEJU_COD + 1) as ID FROM LEAO.dbo.PESSOA_JURIDICA')
+                .query(`SELECT MAX(PEJU_COD + 1) as ID FROM ${banco}.dbo.PESSOA_JURIDICA`)
                 .then((resp2: any) => {
                     const PEJU_COD = resp2.recordset[0].ID
                     
@@ -46,7 +46,7 @@ const execSqlPejuForn = async (
                         .query(queryInsertPeju)
                         .then((resp2: any) => {
                             connect.request()
-                                .query('SELECT MAX(FORN_COD + 1) as ID FROM LEAO.dbo.FORNECEDOR')
+                                .query(`SELECT MAX(FORN_COD + 1) as ID FROM ${banco}.dbo.FORNECEDOR`)
                                 .then((resp3) => { 
                                     const FORN_COD = resp3.recordset[0].ID
                                     const queryFornecedor = insertFornedor(
@@ -70,6 +70,9 @@ const execSqlPejuForn = async (
                                 })
                          })
                         .catch(() => {
+                            console.log('====================================');
+                            console.log(2);
+                            console.log('====================================');
                             res.status(400).json({ message: 'Erro ao inserir pessoa juridica' })
                         })
                 })
