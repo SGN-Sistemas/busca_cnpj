@@ -115,7 +115,7 @@ export class AddEmpresaAuxService {
       capitalSocial = EMPR_CAPITAL_SOCIAL;
     }
     const sql = insertEmpresaAux(razao, fantasia, cnpj, tipo, abertura, telefone, email, situacao, porte, naturezaJuridica, ultimaAtualizacao, status, motivoSituacao, situacaoEspecial, capitalSocial);
-    const empresaQuery = await empresaRepository.query(sql);
+    const empresaQuery = await empresaRepository.query(sql.sql, sql.params);
     return empresaQuery;
   }
 }

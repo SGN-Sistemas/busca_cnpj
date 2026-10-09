@@ -57,7 +57,7 @@ export class AddEnderecoService {
     }
     const emprCod = ENDE_EMPR_COD;
     const sql = insertEnde(complemento, bairro, logradouro, municipio, uf, numero, cep, emprCod);
-    const endereco = await enderecoRepository.query(sql);
+    const endereco = await enderecoRepository.query(sql.sql, sql.params);
     return endereco;
   }
 }

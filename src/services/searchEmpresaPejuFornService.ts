@@ -5,7 +5,7 @@ export class SearchEmpresaPejuFornService {
     cnpj
   }: any): Promise<any> {
     const sql = selectEmpresaEndereco(cnpj);
-    const empresaExists = await empresaRepository.query(sql);
+    const empresaExists = await empresaRepository.query(sql.sql, sql.params);
     if (!empresaExists) {
       return 'Erro empresa não existe';
     }
