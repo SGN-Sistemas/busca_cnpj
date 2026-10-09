@@ -35,6 +35,11 @@ AppDataSource.initialize().then(() => {
     });
   });
   app.use('', router);
+  // Apenas registra o erro e repassa adiante, sem alterar a resposta
+  app.use((error: Error, req: Request, _res: Response, next: NextFunction) => {
+    console.error(`[ERRO] ${req.method} ${req.originalUrl} - ${error.message}`);
+    next(error);
+  });
   const port = process.env.PORT;
   app.listen(port, () => {
     console.log(`RODANDO NA PORTA ${port}`);

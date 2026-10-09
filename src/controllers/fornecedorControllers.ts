@@ -42,7 +42,8 @@ export default class FornecedorControllers {
       });
       if (!dadosEmpresa[0].RAZAO_SOCIAL || dadosEmpresa.RAZAO_SOCIAL === '') {
         const deleteEmpresaBdAux = new DeleteEmpresaBdAux();
-        await deleteEmpresaBdAux.execute(dadosEmpresa[0].EMPR_COD);
+        await deleteEmpresaBdAux.execute(dadosEmpresa[0].ID);
+        console.error(`[ERRO] ${req.method} ${req.originalUrl} - falha ao cadastrar empresa na base auxiliar`);
         return res.status(400).json({
           message: 'Erro ao cadastrar empresa'
         });
@@ -66,6 +67,7 @@ export default class FornecedorControllers {
       const addPejuServiceExec = await addPejuService.execute(selectEmpresaPejuForn[0].EMPR_CNPJ, selectEmpresaPejuForn[0].EMPR_EMAIL, selectEmpresaPejuForn[0].ENDE_UF, selectEmpresaPejuForn[0].ENDE_MUNICIPIO, selectEmpresaPejuForn[0].EMPR_RAZAO_SOCIAL, selectEmpresaPejuForn[0].EMPR_FANTASIA, selectEmpresaPejuForn[0].EMPR_TELEFONE, selectEmpresaPejuForn[0].ENDE_LOGRADOURO + ' ' + selectEmpresaPejuForn[0].ENDE_NUMERO + ' ' + selectEmpresaPejuForn[0].ENDE_COMPLEMENTO, selectEmpresaPejuForn[0].ENDE_CEP, selectEmpresaPejuForn[0].ENDE_BAIRRO, banco);
       const addFornService = new AddFornService();
       const addFornServiceExec = await addFornService.execute(selectEmpresaPejuForn[0].EMPR_FANTASIA, addPejuServiceExec[0].ID, banco);
+      console.log(`[SUCESSO] ${req.method} ${req.originalUrl} - processo finalizado`);
       return res.json({
         ID: addFornServiceExec[0].ID
       });
@@ -78,6 +80,7 @@ export default class FornecedorControllers {
     const addPejuServiceExec = await addPejuService.execute(selectEmpresaPejuForn[0].EMPR_CNPJ, selectEmpresaPejuForn[0].EMPR_EMAIL, selectEmpresaPejuForn[0].ENDE_UF, selectEmpresaPejuForn[0].ENDE_MUNICIPIO, selectEmpresaPejuForn[0].EMPR_RAZAO_SOCIAL, selectEmpresaPejuForn[0].EMPR_FANTASIA, selectEmpresaPejuForn[0].EMPR_TELEFONE, selectEmpresaPejuForn[0].ENDE_LOGRADOURO + ' ' + selectEmpresaPejuForn[0].ENDE_NUMERO + ' ' + selectEmpresaPejuForn[0].ENDE_COMPLEMENTO, selectEmpresaPejuForn[0].ENDE_CEP, selectEmpresaPejuForn[0].ENDE_BAIRRO, banco);
     const addFornService = new AddFornService();
     const addFornServiceExec = await addFornService.execute(selectEmpresaPejuForn[0].EMPR_FANTASIA, addPejuServiceExec[0].ID, banco);
+    console.log(`[SUCESSO] ${req.method} ${req.originalUrl} - processo finalizado`);
     return res.json({
       ID: addFornServiceExec[0].ID
     });
