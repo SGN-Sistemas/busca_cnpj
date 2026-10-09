@@ -11,10 +11,13 @@ import { DeleteEmpresaBdAux } from '../services/deleteEmpresaBdAux'
 export default class FilialControllersPaid {
   async add (req: Request, res: Response) {
     const {
-      cnpj,
+      cnpj: cnpjEntrada,
       banco,
       emprCod
     } = req.params;
+    // Remove pontos, barra, traço e espaços: mantém só os números
+    const cnpj = String(cnpjEntrada).replace(/\D/g, '');
+    console.log(`[CNPJ] ${req.method} ${req.originalUrl} - recebido: "${cnpjEntrada}" | usado: "${cnpj}"`);
     const searchEmpresaAuxService = new SearchEmpresaAuxService();
     const exitsEmpresa = await searchEmpresaAuxService.execute({
       EMPR_CNPJ: cnpj

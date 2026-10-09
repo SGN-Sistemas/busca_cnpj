@@ -7,6 +7,7 @@ export class SearchReceitaWsServicePaid {
   async execute (cnpj: any): Promise<any> {
     const tokenWS = process.env.TOKEN_WS;
     let jsonReturn: any
+    console.log(`[CNPJ] enviado para a ReceitaWS: https://receitaws.com.br/v1/cnpj/${cnpj}/days/7`);
     await axios.get(`https://receitaws.com.br/v1/cnpj/${cnpj}/days/7`, {
       headers: {
         'Accept-Encoding': 'gzip,deflate,compress',
