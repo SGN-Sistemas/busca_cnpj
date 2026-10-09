@@ -1,0 +1,69 @@
+{
+  "name": "busca_cnpj_refatorado",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.18"
+  },
+  "dependencies": {
+    "axios": "^1.20.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "express-async-errors": "^3.1.1",
+    "mssql": "^9.3.3",
+    "reflect-metadata": "^0.2.2",
+    "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.31"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.29.7",
+    "@babel/core": "^7.29.7",
+    "@babel/node": "^7.29.7",
+    "@babel/plugin-proposal-decorators": "^7.29.7",
+    "@babel/plugin-transform-class-properties": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-typescript": "^7.29.7",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.25",
+    "@types/node": "^20.19.43",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "babel-plugin-module-resolver": "^5.0.3",
+    "babel-plugin-transform-typescript-metadata": "^0.3.2",
+    "eslint": "^8.57.1",
+    "eslint-config-standard-with-typescript": "^24.0.0",
+    "eslint-config-xo": "^0.43.1",
+    "eslint-config-xo-typescript": "^0.55.1",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.6.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.14",
+    "ts-jest": "^29.4.14",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "~5.9.3"
+  },
+  "resolutions": {
+    "@types/express": "^4.17.25",
+    "@types/serve-static": "^1.15.10"
+  },
+  "scripts": {
+    "test": "jest",
+    "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server.ts",
+    "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files",
+    "migration:generate": "typeorm-ts-node-commonjs -d src/typeorm/index.ts migration:generate src/typeorm/migrations/default",
+    "migration:run": "typeorm-ts-node-commonjs -d src/typeorm/index.ts migration:run",
+    "start": "node dist/server.js",
+    "debug": "node --inspect=9229 dist/server.js",
+    "debug:brk": "node --inspect-brk=9229 dist/server.js",
+    "typecheck": "tsc --noEmit -p .",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:restart": "pm2 restart busca-cnpj",
+    "pm2:stop": "pm2 stop busca-cnpj",
+    "pm2:logs": "pm2 logs busca-cnpj",
+    "deploy": "npm run build && pm2 startOrReload ecosystem.config.js"
+  }
+}

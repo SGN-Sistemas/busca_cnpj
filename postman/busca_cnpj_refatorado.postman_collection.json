@@ -1,0 +1,1620 @@
+{
+  "info": {
+    "_postman_id": "10271d4f-63e6-4a00-aea1-2913ac338c84",
+    "name": "Busca CNPJ (refatorado) - Produção",
+    "description": "API de busca de CNPJ (ReceitaWS) e cadastro automático no ERP SGN.\nGerada a partir do dist/ em produção (/var/node_apps/busca_cnpj_refatorado).\n\nAtenção: cada chamada GRAVA no banco do cliente (:banco). Use um banco de teste.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Raiz",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200",
+              "originalRequest": {
+                "method": "GET",
+                "url": "{{baseUrl}}/"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"Teste\": \"teste\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "v1Gratis",
+      "description": "Usa a ReceitaWS pública (limite ~3 consultas/min → 429).",
+      "item": [
+        {
+          "name": "Fornecedor - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Gratis/fornecedor/:cnpj/:banco",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Gratis",
+                "fornecedor",
+                ":cnpj",
+                ":banco"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                }
+              ]
+            },
+            "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_fornecedor_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/fornecedor/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "fornecedor",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/fornecedor/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "fornecedor",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/fornecedor/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "fornecedor",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Cliente - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Gratis/cliente/:cnpj/:banco",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Gratis",
+                "cliente",
+                ":cnpj",
+                ":banco"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                }
+              ]
+            },
+            "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_cliente_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/cliente/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "cliente",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/cliente/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "cliente",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/cliente/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "cliente",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Empresa - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Gratis/empresa/:cnpj/:banco",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Gratis",
+                "empresa",
+                ":cnpj",
+                ":banco"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                }
+              ]
+            },
+            "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_empresa_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/empresa/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "empresa",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/empresa/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "empresa",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/empresa/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "empresa",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Filial - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Gratis/filial/:cnpj/:banco/:emprCod",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Gratis",
+                "filial",
+                ":cnpj",
+                ":banco",
+                ":emprCod"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                },
+                {
+                  "key": "emprCod",
+                  "value": "{{emprCod}}",
+                  "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                }
+              ]
+            },
+            "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_filial_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/filial/:cnpj/:banco/:emprCod",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "filial",
+                    ":cnpj",
+                    ":banco",
+                    ":emprCod"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    },
+                    {
+                      "key": "emprCod",
+                      "value": "{{emprCod}}",
+                      "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                    }
+                  ]
+                },
+                "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/filial/:cnpj/:banco/:emprCod",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "filial",
+                    ":cnpj",
+                    ":banco",
+                    ":emprCod"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    },
+                    {
+                      "key": "emprCod",
+                      "value": "{{emprCod}}",
+                      "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                    }
+                  ]
+                },
+                "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Gratis/filial/:cnpj/:banco/:emprCod",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Gratis",
+                    "filial",
+                    ":cnpj",
+                    ":banco",
+                    ":emprCod"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    },
+                    {
+                      "key": "emprCod",
+                      "value": "{{emprCod}}",
+                      "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                    }
+                  ]
+                },
+                "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Rota principal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Gratis",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Gratis"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200",
+              "originalRequest": {
+                "method": "GET",
+                "url": "{{baseUrl}}/v1Gratis"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Rota principal\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Swagger (doc)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Gratis/doc/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Gratis",
+                "doc",
+                ""
+              ]
+            },
+            "description": "Abre a documentação Swagger UI (HTML) — melhor abrir no navegador."
+          }
+        }
+      ]
+    },
+    {
+      "name": "v1Paga",
+      "description": "Usa a ReceitaWS comercial (/days/7, TOKEN_WS) — só onde indicado.",
+      "item": [
+        {
+          "name": "Fornecedor - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Paga/fornecedor/:cnpj/:banco",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Paga",
+                "fornecedor",
+                ":cnpj",
+                ":banco"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                }
+              ]
+            },
+            "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_fornecedor_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/fornecedor/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "fornecedor",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/fornecedor/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "fornecedor",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/fornecedor/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "fornecedor",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Fornecedor no ERP (FORNECEDOR / PESSOA_JURIDICA). Retorna FORN_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Cliente - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Paga/cliente/:cnpj/:banco",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Paga",
+                "cliente",
+                ":cnpj",
+                ":banco"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                }
+              ]
+            },
+            "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller PAGO (ReceitaWS /days/7 com TOKEN_WS)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_cliente_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/cliente/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "cliente",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller PAGO (ReceitaWS /days/7 com TOKEN_WS)."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/cliente/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "cliente",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller PAGO (ReceitaWS /days/7 com TOKEN_WS)."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/cliente/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "cliente",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra Pessoa Jurídica + Cliente no ERP (CLIENTE / PESSOA_JURIDICA). Retorna CLIE_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller PAGO (ReceitaWS /days/7 com TOKEN_WS)."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Empresa - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Paga/empresa/:cnpj/:banco",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Paga",
+                "empresa",
+                ":cnpj",
+                ":banco"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                }
+              ]
+            },
+            "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_empresa_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/empresa/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "empresa",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/empresa/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "empresa",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/empresa/:cnpj/:banco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "empresa",
+                    ":cnpj",
+                    ":banco"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    }
+                  ]
+                },
+                "description": "Cadastra a Empresa no ERP (${banco}.dbo.EMPRESA). Retorna EMPR_COD.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Filial - cadastrar por CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Paga/filial/:cnpj/:banco/:emprCod",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Paga",
+                "filial",
+                ":cnpj",
+                ":banco",
+                ":emprCod"
+              ],
+              "variable": [
+                {
+                  "key": "cnpj",
+                  "value": "{{cnpj}}",
+                  "description": "CNPJ só números (14 dígitos)"
+                },
+                {
+                  "key": "banco",
+                  "value": "{{banco}}",
+                  "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                },
+                {
+                  "key": "emprCod",
+                  "value": "{{emprCod}}",
+                  "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                }
+              ]
+            },
+            "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna ID', () => pm.expect(pm.response.json()).to.have.property('ID'));",
+                  "if (pm.response.code === 200) pm.collectionVariables.set('ultimo_filial_id', pm.response.json().ID);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 - Cadastrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/filial/:cnpj/:banco/:emprCod",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "filial",
+                    ":cnpj",
+                    ":banco",
+                    ":emprCod"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    },
+                    {
+                      "key": "emprCod",
+                      "value": "{{emprCod}}",
+                      "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                    }
+                  ]
+                },
+                "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ID\": 123\n}"
+            },
+            {
+              "name": "400 - Erro ao cadastrar empresa",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/filial/:cnpj/:banco/:emprCod",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "filial",
+                    ":cnpj",
+                    ":banco",
+                    ":emprCod"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    },
+                    {
+                      "key": "emprCod",
+                      "value": "{{emprCod}}",
+                      "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                    }
+                  ]
+                },
+                "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Erro ao cadastrar empresa\"\n}"
+            },
+            {
+              "name": "500 - Erro interno (ReceitaWS 429/CNPJ inválido/erro SQL)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1Paga/filial/:cnpj/:banco/:emprCod",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1Paga",
+                    "filial",
+                    ":cnpj",
+                    ":banco",
+                    ":emprCod"
+                  ],
+                  "variable": [
+                    {
+                      "key": "cnpj",
+                      "value": "{{cnpj}}",
+                      "description": "CNPJ só números (14 dígitos)"
+                    },
+                    {
+                      "key": "banco",
+                      "value": "{{banco}}",
+                      "description": "Nome do banco SQL Server do cliente SGN (ex.: LEAO). Usado como ${banco}.dbo.TABELA"
+                    },
+                    {
+                      "key": "emprCod",
+                      "value": "{{emprCod}}",
+                      "description": "EMPR_COD da empresa matriz no banco do cliente, à qual a filial será vinculada"
+                    }
+                  ]
+                },
+                "description": "Cadastra uma Filial vinculada à empresa :emprCod. Retorna o código da filial.\n\nFluxo: 1) procura o CNPJ na base auxiliar (EMPRESA/ENDERECO); 2) se não existir consulta a ReceitaWS e grava na base auxiliar; 3) grava no banco do cliente informado em :banco.\n\nMétodo GET, sem body, sem autenticação. Todos os parâmetros vão na URL.\n\n⚠ Em produção esta rota usa o controller GRÁTIS (mesmo de /v1Gratis) — o controller *Paid existe mas não está ligado à rota."
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<pre>Error: ...</pre>  (o middleware de erro é registrado antes das rotas, então erros caem no handler padrão do Express)"
+            }
+          ]
+        },
+        {
+          "name": "Rota principal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Paga",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Paga"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200",
+              "originalRequest": {
+                "method": "GET",
+                "url": "{{baseUrl}}/v1Paga"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Rota principal\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Swagger (doc)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1Paga/doc/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1Paga",
+                "doc",
+                ""
+              ]
+            },
+            "description": "Abre a documentação Swagger UI (HTML) — melhor abrir no navegador."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:9002"
+    },
+    {
+      "key": "cnpj",
+      "value": "00000000000191"
+    },
+    {
+      "key": "banco",
+      "value": "LEAO"
+    },
+    {
+      "key": "emprCod",
+      "value": "1"
+    }
+  ]
+}
