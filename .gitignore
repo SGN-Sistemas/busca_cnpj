@@ -11,3 +11,6 @@ dist/
 backups/
 *.zip
 yarn-error.log
+
+# logs do PM2
+logs/

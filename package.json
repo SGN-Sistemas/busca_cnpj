@@ -59,6 +59,11 @@
     "start": "node dist/server.js",
     "debug": "node --inspect=9229 dist/server.js",
     "debug:brk": "node --inspect-brk=9229 dist/server.js",
-    "typecheck": "tsc --noEmit -p ."
+    "typecheck": "tsc --noEmit -p .",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:restart": "pm2 restart busca-cnpj",
+    "pm2:stop": "pm2 stop busca-cnpj",
+    "pm2:logs": "pm2 logs busca-cnpj",
+    "deploy": "npm run build && pm2 startOrReload ecosystem.config.js"
   }
 }
