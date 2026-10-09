@@ -1,0 +1,159 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": " Api de busca cnpj ",
+        "description": "Api pensada para realizar integração com a receita ws para facilitar o cadastro de cliente,empresa,filial e fornecedor",
+        "contact": {
+            "email": "desenvolvimento@sgnsistemas.com.br"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://192.168.102.205:9002/v1Gratis",
+            "description": "Base url de produção acesso externo"
+        },
+        {
+            "url": "http://localhost:9002/v1Gratis",
+            "description": "Base url de dev"
+        },
+        {
+            "url": "http://129.148.50.73:9002/v1Gratis",
+            "description": "Base url da oracle externo"
+        },
+        {
+            "url": "http://129.148.50.73:9002/v1Gratis",
+            "description": "Base url da oracle interno"
+        },
+        {
+            "url": "http://192.168.102.205:9002/v1Paga",
+            "description": "Base url de produção acesso externo"
+        },
+        {
+            "url": "http://localhost:9002/v1Paga",
+            "description": "Base url de dev"
+        },
+        {
+            "url": "http://129.148.50.73:9002/v1Paga",
+            "description": "Base url da oracle externo"
+        },
+        {
+            "url": "http://129.148.50.73:9002/v1Paga",
+            "description": "Base url da oracle interno"
+        }
+    ],
+    "paths": {
+        "/cliente/{cnpj}/{banco}": {
+            "get": {
+                "sumary": "cliente",
+                "description": "Cadastro de cliente ",
+                "tags": [
+                    "Cliente"
+                ],
+                "responses": {
+                    "400": {
+                        "description": " Known bug "
+                    },
+                    "200": {
+                        "description": "Retorno do ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/IDResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fornecedor/{cnpj}/{banco}": {
+            "get": {
+                "sumary": "fornecedor",
+                "description": "Cadastro de fornecedor ",
+                "tags": [
+                    "Fornecedor"
+                ],
+                "responses": {
+                    "400": {
+                        "description": " Known bug "
+                    },
+                    "200": {
+                        "description": "Retorno do ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/IDResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/empresa/{cnpj}/{banco}": {
+            "get": {
+                "sumary": "empresa",
+                "description": "Cadastro de empresa ",
+                "tags": [
+                    "Empresa"
+                ],
+                "responses": {
+                    "400": {
+                        "description": " Known bug "
+                    },
+                    "200": {
+                        "description": "Retorno do ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/IDResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/filial/{cnpj}/{banco}/{empr_cod}": {
+            "get": {
+                "sumary": "filial",
+                "description": "Cadastro de filial ",
+                "tags": [
+                    "Filial"
+                ],
+                "responses": {
+                    "400": {
+                        "description": " Known bug "
+                    },
+                    "200": {
+                        "description": "Retorno do ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/IDResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "IDResponse": {
+                "type": "object",
+                "properties": {
+                    "ID": {
+                        "type": "number"
+                    }
+                }
+            }
+        }
+    }
+}

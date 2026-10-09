@@ -1,3 +1,13 @@
 node_modules/
-.env
+node_modules_*/
+
+# build (gerado por yarn build)
 dist/
+
+# variáveis de ambiente (credenciais) — use .env.example como modelo
+.env
+**/.env
+
+backups/
+*.zip
+yarn-error.log
