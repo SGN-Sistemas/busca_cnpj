@@ -4,6 +4,7 @@ import axios from 'axios'
 export class SearchReceitaWsService {
   async execute (cnpj: any): Promise<any> {
     let jsonReturn: any
+    console.log(`[CNPJ] enviado para a ReceitaWS: https://receitaws.com.br/v1/cnpj/${cnpj}`);
     await axios.get(`https://receitaws.com.br/v1/cnpj/${cnpj}`, {
       headers: {
         'Accept-Encoding': 'gzip,deflate,compress'
